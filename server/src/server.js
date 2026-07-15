@@ -5,6 +5,8 @@ import express from "express";
 import connectDB from "./config/db.js";
 import { port } from "./config/env.js";
 
+import errorHandler from "./middleware/errorHandler.js";
+
 const app = express();
 
 // Connect to the MongoDB database
@@ -14,6 +16,9 @@ connectDB();
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
+
+// Error-Handling Middleware (after all routes)
+app.use(errorHandler);
 
 // Start the Express server
 app.listen(port, () => {
