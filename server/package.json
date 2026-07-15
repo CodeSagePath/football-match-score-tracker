@@ -1,0 +1,12 @@
+{
+  "name": "match-tracker-server",
+  "version": "0.1.0",
+  "description": "BACKEND SETUP (NODE.JS + EXPRESS + MONGODB) -- Football Match Score Tracker",
+  "license": "MIT",
+  "author": "CodeSagePath",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
