@@ -1,9 +1,22 @@
 import winston from "winston";
 
+const istFormat = new Intl.DateTimeFormat("en-ZA", {
+  timeZone: "Asia/Kolkata",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23"
+});
+
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
-    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.timestamp({
+      format: () => istFormat.format(new Date()).replace(/\//g, "-").replace(",", "")
+    }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
     winston.format.json()
