@@ -1,7 +1,7 @@
 // Team controller - Functions to handle actual data operations related to Teams
 
-import Team from "../models/Team";
-import Match from "../models/Match";
+import Team from "../models/Team.js";
+import Match from "../models/Match.js";
 
 export async function listTeams(req, res, next) {
   try {

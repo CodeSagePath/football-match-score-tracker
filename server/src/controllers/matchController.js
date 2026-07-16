@@ -1,6 +1,6 @@
 // Match Controller - Functions to handle actual data operations related to Matches
 
-import Match from "../models/Match";
+import Match from "../models/Match.js";
 
 export async function listMatches(req, res, next) {
   try {
