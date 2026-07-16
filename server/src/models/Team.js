@@ -21,6 +21,25 @@ const teamSchema = new Schema(
   }
 );
 
+// Define case-insensitive unique index only on active (non-deleted) teams
+teamSchema.index(
+  { name: 1 },
+  {
+    unique: true,
+    collation: { locale: "en", strength: 2 },
+    partialFilterExpression: { deletedAt: null }
+  }
+);
+
+// Pre-query middleware to filter out soft-deleted teams
+teamSchema.pre(/^find/, function (next) {
+  if (this.getOptions().withDeleted) {
+    return next();
+  }
+  this.where({ deletedAt: null });
+  next();
+});
+
 const Team = model("Team", teamSchema);
 
 export default Team;

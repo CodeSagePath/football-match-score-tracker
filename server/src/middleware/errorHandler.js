@@ -1,7 +1,7 @@
-// Error Handler Middleware
+import logger from "../utils/logger.js";
 
 export default function errorHandler(error, req, res, next) {
-  console.log("Error Handler:", error);
+  logger.error("API Error:", error);
 
-  res.status(500).json({ message: "Something went wrong." });
-};
+  res.status(500).json({ error: "Something went wrong." });
+}

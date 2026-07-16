@@ -44,6 +44,15 @@ const matchSchema = new Schema(
   }
 );
 
+// Pre-query middleware to filter out soft-deleted matches
+matchSchema.pre(/^find/, function (next) {
+  if (this.getOptions().withDeleted) {
+    return next();
+  }
+  this.where({ deletedAt: null });
+  next();
+});
+
 const Match = model("Match", matchSchema);
 
 export default Match;
