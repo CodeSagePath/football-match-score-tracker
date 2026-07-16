@@ -5,6 +5,14 @@ import express from "express";
 import connectDB from "./config/db.js";
 import { port } from "./config/env.js";
 
+// Importing routers
+import matchRoutes from "./routes/matchRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
+
+// Mounting routes
+app.use("/api/teams", teamRoutes);
+app.use("/api/matches", matchRoutes);
+
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
