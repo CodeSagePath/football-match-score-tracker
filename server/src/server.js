@@ -1,5 +1,4 @@
-// Define a basic Express server that listens on a specified port and connects to a MongoDB database using Mongoose. 
-// The server will log a message when it starts and will handle any errors that occur during the database connection process.
+// Main entry point into the server.
 
 import express from "express";
 import cors from "cors";
@@ -14,8 +13,8 @@ import { port } from "./config/env.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 // Importing routers
-import {matchRoutes} from "./routes/matchRoutes.js";
-import {teamRoutes} from "./routes/teamRoutes.js";
+import { matchRoutes } from "./routes/matchRoutes.js";
+import { teamRoutes } from "./routes/teamRoutes.js";
 
 // Logging helper
 import logger from "./utils/logger.js";

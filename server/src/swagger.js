@@ -2,7 +2,7 @@ export const swaggerDocument = {
   openapi: '3.0.0',
   info: {
     title: 'Football Match Score Tracker API',
-    version: '1.0.0'
+    version: '0.1.0'
   },
   paths: {
     '/api/teams': {

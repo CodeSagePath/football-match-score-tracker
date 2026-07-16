@@ -1,2 +1,11 @@
 # Developer Reference Documentation
 *.txt
+
+# Ignore logs
+logs/
+server/logs/
+
+# Ignore node_modules & local environments
+node_modules/
+.env
+dist/
