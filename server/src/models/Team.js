@@ -32,12 +32,11 @@ teamSchema.index(
 );
 
 // Pre-query middleware to filter out soft-deleted teams
-teamSchema.pre(/^find/, function (next) {
+teamSchema.pre(/^find/, function () {
   if (this.getOptions().withDeleted) {
-    return next();
+    return;
   }
   this.where({ deletedAt: null });
-  next();
 });
 
 const Team = model("Team", teamSchema);

@@ -19,7 +19,10 @@ const logger = winston.createLogger({
     }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
-    winston.format.json()
+    winston.format.printf(({ timestamp, level, message, stack }) => {
+      const logMessage = stack || message;
+      return `${timestamp} [${level.toUpperCase()}]: ${logMessage}`;
+    })
   ),
   defaultMeta: { service: "football-score-tracker" },
   transports: [

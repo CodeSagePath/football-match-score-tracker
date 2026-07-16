@@ -29,7 +29,7 @@ connectDB();
 const morganStream = {
   write: (message) => logger.info(message.trim()),
 };
-app.use(morgan("combined", { stream: morganStream }));
+app.use(morgan(":method :url :status - :response-time ms", { stream: morganStream }));
 
 // Allow requests from any origin
 app.use(cors());
