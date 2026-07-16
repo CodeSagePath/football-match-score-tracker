@@ -20,6 +20,9 @@ import {teamRoutes} from "./routes/teamRoutes.js";
 // Logging helper
 import logger from "./utils/logger.js";
 
+// Swagger API Document
+import { swaggerDocument } from "./swagger.js";
+
 const app = express();
 
 // Connect to the MongoDB database
@@ -44,6 +47,50 @@ app.use("/api/matches", matchRoutes);
 // create a simple route for testing
 app.get("/api/", (req, res) => {
   res.send("Welcome to \"Football Match Score Tracker.\"");
+});
+
+// Serve the OpenAPI specification file
+app.get("/api/swagger.json", (req, res) => {
+  res.json(swaggerDocument);
+});
+
+// Serve the interactive Swagger UI page using CDN scripts
+app.get("/api/docs", (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Football Score Tracker API Docs</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui.css" />
+    <style>
+      html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+      *, *:before, *:after { box-sizing: inherit; }
+      body { margin: 0; background: #fafafa; }
+    </style>
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
+    <script>
+      window.onload = () => {
+        window.ui = SwaggerUIBundle({
+          url: '/api/swagger.json',
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          layout: "BaseLayout"
+        });
+      };
+    </script>
+  </body>
+</html>
+  `);
 });
 
 // Error-Handling Middleware (after all routes)

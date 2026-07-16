@@ -1,5 +1,5 @@
 {
-  "name": "match-tracker-server",
+  "name": "football-score-api",
   "version": "0.1.0",
   "description": "BACKEND SETUP (NODE.JS + EXPRESS + MONGODB) -- Football Match Score Tracker",
   "license": "MIT",
