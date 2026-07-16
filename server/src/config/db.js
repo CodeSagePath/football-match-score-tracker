@@ -1,23 +1,15 @@
-/**
- * - Import mongoose.
-   - Import the `dbUri` from your env.js config.
-   - Define an asynchronous function named `connectDB`.
-   - Inside this function: Use `mongoose.connect(dbUri, { ... })`.
-     (Mongoose options: useNewUrlParser, useUnifiedTopology).
-   - Use try/catch. If successful, log a success message.
-   - If error, log the error and call `process.exit(1)`.
-   - Export this `connectDB` function.
- */
+// Configuration related to database connection
 
 import mongoose from "mongoose";
-import { dbUri, port } from "./env.js";
+import { dbUri } from "./env.js";
 
 const connectDB = async () => {
   try {
     await mongoose.connect(dbUri);
-    console.log(`MongoDB connected successfully on port ${port}`);
+    console.log(`MongoDB connected successfully`);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
+    process.exit(1); // Exit the process if failed to connect to DB
   }
 };
 

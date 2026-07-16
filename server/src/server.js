@@ -2,6 +2,8 @@
 // The server will log a message when it starts and will handle any errors that occur during the database connection process.
 
 import express from "express";
+import cors from "cors";
+
 import connectDB from "./config/db.js";
 import { port } from "./config/env.js";
 
@@ -15,6 +17,9 @@ const app = express();
 
 // Connect to the MongoDB database
 connectDB();
+
+// Allow requests from any origin
+app.use(cors());
 
 // JSON body parser
 app.use(express.json());

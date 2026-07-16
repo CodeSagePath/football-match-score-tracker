@@ -9,8 +9,6 @@ const teamSchema = new Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
-      lowercase: true,
       trim: true,
     },
     deletedAt: {
