@@ -1,11 +1,11 @@
 import { useState, useRef, useContext } from "react";
-import TeamContext from "../context/TeamContext.jsx";
+import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
 import API from "../utils/api.js";
 
 export default function TeamsList() {
 
     const teamInputRef = useRef(null);
-    const { teams, setTeams } = useContext(TeamContext);
+    const { teams, setTeams } = useContext(TeamAndMatchContext);
 
     const handleAddTeam = async (event) => {
         event.preventDefault();

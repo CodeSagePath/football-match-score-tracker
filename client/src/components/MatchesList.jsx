@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
-import MatchesContext from "../context/TeamContext.jsx";
+import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
 import API from "../utils/api";
 
 export default function MatchesList() {
 
-    const { teams, matches, setMatches } = useContext(MatchesContext);
+    const { teams, matches, setMatches } = useContext(TeamAndMatchContext);
 
     const [team1_id, setTeam1_id] = useState("");
     const [team2_id, setTeam2_id] = useState("");
@@ -92,8 +92,9 @@ export default function MatchesList() {
     return (
         <>
             <h2>Matches List</h2>
+            {/* Display matches */}
             <ul>
-                {matches.map((match, index) => {
+                {matches.filter(match => !match.matchFinishFlag).map((match) => {
                     return <li key={match.id}>
                         <p>
                             {match.team1.name} - {match.team2.name}
@@ -116,6 +117,7 @@ export default function MatchesList() {
                 })}
             </ul>
 
+            {/* Match Start Form */}
             <form onSubmit={handleStartMatch}>
                 <select
                     value={team1_id}
@@ -147,7 +149,8 @@ export default function MatchesList() {
                 <button type="submit">Create Match</button>
             </form>
 
-            {matches.map((match) => (
+            {/* Update matches */}
+            {matches.filter(match => !match.matchFinishFlag).map((match) => (
                 <li key={match.id} style={{ marginBottom: "15px" }}>
                     <p>
                         {match.team1.name} ({match.team1_score}) vs {match.team2.name} ({match.team2_score})
@@ -181,7 +184,7 @@ export default function MatchesList() {
                         </p>
                     )}
 
-                    {/* Delete button (available for any match) */}
+                    {/* Delete button (available for all matches) */}
                     <button onClick={() => handleDeleteMatch(match.id)} style={{ color: "red" }}>
                         Delete Match Record
                     </button>

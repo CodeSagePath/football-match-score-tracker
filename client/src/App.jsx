@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import TeamContext from "./context/TeamContext.jsx";
+import TeamContext from "./context/TeamAndMatchContext.jsx";
 import API from "./utils/api.js";
+
+import { Routes, Route, Link } from "react-router-dom";
 
 import TeamsList from "./components/TeamsList.jsx";
 import MatchesList from "./components/MatchesList.jsx";
-
-import { Routes, Route, Link } from "react-router-dom";
+import PastMatchesList from "./components/PastMatchesList.jsx";
 
 export default function App() {
   const [teams, setTeams] = useState([]);
@@ -50,6 +51,8 @@ export default function App() {
         <Link to="/teams">Teams</Link>
         <br />
         <Link to="/matches">Matches</Link>
+        <br />
+        <Link to="/past-matches">Past Matches</Link>
       </div>
 
       <h1>Football Match Score Tracker</h1>
@@ -58,9 +61,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={
             <h3>Welcome to "Football Match Score Tracker."</h3>
-          }></Route>
+          } />
           <Route path="/teams" element={<TeamsList />} />
           <Route path="/matches" element={<MatchesList />} />
+          <Route path="/past-matches" element={<PastMatchesList />} />
         </Routes>
       </TeamContext>
     </div>
