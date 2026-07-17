@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "football-score-tracker",
+      name: "football-score-api",
 
       // Entry point
       script: "./src/server.js",
