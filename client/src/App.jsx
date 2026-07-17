@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import TeamContext from "./context/TeamAndMatchContext.jsx";
-import API from "./utils/api.js";
+import { getTeams } from "./services/teamService.js";
+import { getMatches } from "./services/matchService.js";
 
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -16,13 +17,13 @@ export default function App() {
   useEffect(() => {
     (async () => {
       try {
-        const [teamsResponse, matchesResponse] = await Promise.all([
-          API.get("/teams"),
-          API.get("/matches")
+        const [teamsData, matchesData] = await Promise.all([
+          getTeams(),
+          getMatches()
         ]);
 
-        setTeams(teamsResponse.data);
-        setMatches(matchesResponse.data);
+        setTeams(teamsData);
+        setMatches(matchesData);
       } catch (error) {
         console.log("Error fetching data: ", error.message);
       }

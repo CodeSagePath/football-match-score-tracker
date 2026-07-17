@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
-import API from "../utils/api";
+import { incrementGoal, decrementGoal, finishMatch, deleteMatch } from "../services/matchService.js";
 
 import StartMatchForm from "./MatchComponent/StartMatchForm.jsx";
 import ActiveMatchCard from "./MatchComponent/ActiveMatchCard.jsx";
@@ -16,14 +16,13 @@ export default function MatchesList() {
 
         try {
             if (isIncrement) {
-                // Use PUT to /goal
-                const response = await API.put(`/matches/${matchId}/goal`, { team: teamNumber });
+                const updatedMatch = await incrementGoal(matchId, teamNumber);
 
                 // Updating the state with the new response
                 const updatedList = [...matches];
                 const index = updatedList.findIndex(match => match.id === matchId);
 
-                updatedList[index] = response.data;
+                updatedList[index] = updatedMatch;
 
                 setMatches(updatedList);
             } else {
@@ -40,14 +39,13 @@ export default function MatchesList() {
                     return;
                 }
 
-                // Use PUT to /decrement
-                const response = await API.put(`/matches/${matchId}/decrement`, { team: teamNumber });
+                const updatedMatch = await decrementGoal(matchId, teamNumber);
 
                 // Updating the state with the new response
                 const updatedList = [...matches];
                 const index = updatedList.findIndex(match => match.id === matchId);
 
-                updatedList[index] = response.data;
+                updatedList[index] = updatedMatch;
 
                 setMatches(updatedList);
             }
@@ -61,14 +59,13 @@ export default function MatchesList() {
     // Handles locking/finishing the match
     const handleFinishMatch = async (matchId) => {
         try {
-            // Use PUT to /finish
-            const response = await API.put(`/matches/${matchId}/finish`);
+            const finishedMatch = await finishMatch(matchId);
 
             // Updating the state with the new response
             const updatedList = [...matches];
             const index = updatedList.findIndex(match => match.id === matchId);
 
-            updatedList[index] = response.data;
+            updatedList[index] = finishedMatch;
 
             setMatches(updatedList);
         } catch (error) {
@@ -78,11 +75,15 @@ export default function MatchesList() {
 
     // Handles deleting a match
     const handleDeleteMatch = async (matchId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this match?");
+        if (!confirmDelete) return;
+
         try {
-            // Use DELETE to /matches
-            await API.delete(`/matches/${matchId}`);
-            const response = await API.get("/matches");
-            setMatches(response.data);
+            await deleteMatch(matchId);
+            
+            // Remove the match from the local state
+            const updatedMatches = matches.filter(match => match.id !== matchId);
+            setMatches(updatedMatches);
         } catch (error) {
             console.error("Error deleting match:", error.message);
         }

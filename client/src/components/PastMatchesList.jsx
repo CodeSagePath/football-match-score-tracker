@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
-import API from "../utils/api.js";
+import { deleteMatch } from "../services/matchService.js";
 
 export default function PastMatchesList() {
 
@@ -8,10 +8,15 @@ export default function PastMatchesList() {
 
     // Function to delete the match
     const handleDeleteMatch = async (matchId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this match?");
+        if (!confirmDelete) return;
+
         try {
-            await API.delete(`/matches/${matchId}`);
-            const updatedMatches = await API.get(`/matches`);
-            setMatches(updatedMatches.data);
+            await deleteMatch(matchId);
+            
+            // Remove the match from the local state
+            const updatedMatches = matches.filter(match => match.id !== matchId);
+            setMatches(updatedMatches);
         } catch (error) {
             console.error("Error deleting match:", error.message);
         }

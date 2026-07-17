@@ -1,6 +1,6 @@
 import { useState, useRef, useContext } from "react";
 import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
-import API from "../utils/api.js";
+import { createTeam, deleteTeam } from "../services/teamService.js";
 
 export default function TeamsList() {
 
@@ -20,10 +20,10 @@ export default function TeamsList() {
 
         // Add the team to the database
         try {
-            const addedTeam = await API.post(`/teams`, { name: teamName });
+            const addedTeamData = await createTeam(teamName);
 
             // Add the team to the state
-            setTeams((teams) => [...teams, addedTeam.data]);
+            setTeams((teams) => [...teams, addedTeamData]);
             teamInputRef.current.value = ""; // Clear the input field after successful addition
 
         } catch (error) {
@@ -42,7 +42,7 @@ export default function TeamsList() {
 
         // Delete the team from the database
         try {
-            await API.delete(`/teams/${teamId}`);
+            await deleteTeam(teamId);
 
             // Remove the team from the state
             const updatedTeam = teams.filter(team => team._id !== teamId);

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import TeamAndMatchContext from "../../context/TeamAndMatchContext.jsx";
-import API from "../../utils/api.js";
+import { createMatch } from "../../services/matchService.js";
 
 export default function StartMatchForm() {
 
@@ -41,13 +41,10 @@ export default function StartMatchForm() {
         }
 
         try {
-            await API.post("/matches", {
-                team1_id,
-                team2_id,
-            });
+            const addedMatchData = await createMatch(team1_id, team2_id);
 
-            const response = await API.get("/matches");
-            setMatches(response.data);
+            // Update local state directly with the newly created match
+            setMatches((prevMatches) => [...prevMatches, addedMatchData]);
 
             // Refreshing the select fields to default value
             setTeam1_id("");
