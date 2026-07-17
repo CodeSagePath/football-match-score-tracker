@@ -9,11 +9,34 @@ export default function MatchesList() {
     const [team1_id, setTeam1_id] = useState("");
     const [team2_id, setTeam2_id] = useState("");
 
+    // Helper function to check if there is an existing match
+    const checkExistingMatch = () => {
+        const existingMatch = matches.find(
+            (match) =>
+                !match.matchFinishFlag &&
+                ((match.team1.id === team1_id && match.team2.id === team2_id) ||
+                    (match.team1.id === team2_id && match.team2.id === team1_id))
+        );
+
+        if (existingMatch) {
+            return true;
+        }
+        return false;
+    };
+
+    // Handles starting a match
     const handleStartMatch = async (e) => {
         e.preventDefault();
 
         if (!team1_id || !team2_id) {
             alert("Select both teams");
+            return;
+        }
+
+        const existingMatch = checkExistingMatch();
+
+        if (existingMatch) {
+            alert("There is already an existing match between these two teams.");
             return;
         }
 
@@ -37,6 +60,9 @@ export default function MatchesList() {
 
     // Handles score increment and decrement
     const handleUpdateGoal = async (matchId, teamNumber, isIncrement) => {
+
+        const match = matches.find(match => match.id === matchId);
+
         try {
             if (isIncrement) {
                 // Use PUT to /goal
@@ -49,6 +75,12 @@ export default function MatchesList() {
                     return;
                 }
 
+                // If goal is already Zero, don't even call the API
+                if ((teamNumber === "1" && match.team1_score === 0) || (teamNumber === "2" && match.team2_score === 0)) {
+                    alert(`Cannot decrement ${teamNumber === "1" ? match.team1.name : match.team2.name}'s score below zero.`);
+                    return;
+                }
+
                 // Use PUT to /decrement
                 await API.put(`/matches/${matchId}/decrement`, { team: teamNumber });
             }
@@ -58,10 +90,6 @@ export default function MatchesList() {
         } catch (error) {
             console.error("Error updating goal:", error.message);
 
-            // 400 error if score is already 0.
-            if (error.response.status === 400) {
-                alert("Cannot decrement score below zero.");
-            }
         }
     };
 
@@ -78,6 +106,7 @@ export default function MatchesList() {
         }
     };
 
+    // Handles deleting a match
     const handleDeleteMatch = async (matchId) => {
         try {
             // Use DELETE to /matches
