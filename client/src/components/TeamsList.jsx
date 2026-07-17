@@ -1,23 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import TeamContext from "../context/TeamContext.jsx";
 import API from "../utils/api.js";
 
 export default function TeamsList() {
-    const [teams, setTeams] = useState([]);
 
     const teamInputRef = useRef(null);
-
-    // Fetch on component mount
-    useEffect(() => {
-        // IIFE
-        (async () => {
-            try {
-                const response = await API.get(`/teams`);
-                setTeams(response.data);
-            } catch (error) {
-                console.log(error.message);
-            }
-        })();
-    }, []);
+    const { teams, setTeams } = useContext(TeamContext);
 
     const handleAddTeam = async (event) => {
         event.preventDefault();
