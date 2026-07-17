@@ -66,7 +66,15 @@ export default function MatchesList() {
         try {
             if (isIncrement) {
                 // Use PUT to /goal
-                await API.put(`/matches/${matchId}/goal`, { team: teamNumber });
+                const response = await API.put(`/matches/${matchId}/goal`, { team: teamNumber });
+
+                // Updating the state with the new response
+                const updatedList = [...matches];
+                const index = updatedList.findIndex(match => match.id === matchId);
+
+                updatedList[index] = response.data;
+
+                setMatches(updatedList);
             } else {
                 const confirmed = window.confirm("Are you sure?");
                 console.log("confirmed:", confirmed);
@@ -82,11 +90,16 @@ export default function MatchesList() {
                 }
 
                 // Use PUT to /decrement
-                await API.put(`/matches/${matchId}/decrement`, { team: teamNumber });
-            }
+                const response = await API.put(`/matches/${matchId}/decrement`, { team: teamNumber });
 
-            const response = await API.get("/matches");
-            setMatches(response.data);
+                // Updating the state with the new response
+                const updatedList = [...matches];
+                const index = updatedList.findIndex(match => match.id === matchId);
+
+                updatedList[index] = response.data;
+
+                setMatches(updatedList);
+            }
         } catch (error) {
             console.error("Error updating goal:", error.message);
 
@@ -98,9 +111,15 @@ export default function MatchesList() {
     const handleFinishMatch = async (matchId) => {
         try {
             // Use PUT to /finish
-            await API.put(`/matches/${matchId}/finish`);
-            const response = await API.get("/matches");
-            setMatches(response.data);
+            const response = await API.put(`/matches/${matchId}/finish`);
+
+            // Updating the state with the new response
+            const updatedList = [...matches];
+            const index = updatedList.findIndex(match => match.id === matchId);
+
+            updatedList[index] = response.data;
+
+            setMatches(updatedList);
         } catch (error) {
             console.error("Error finishing match:", error.response?.data?.error || error.message);
         }
