@@ -12,6 +12,9 @@ import PastMatchesList from "./components/PastMatchesList.jsx";
 export default function App() {
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
+  
+  // Loading state to manage the visibility of the initial fetch spinner
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch on component mount
   useEffect(() => {
@@ -26,6 +29,10 @@ export default function App() {
         setMatches(matchesData);
       } catch (error) {
         console.log("Error fetching data: ", error.message);
+      } finally {
+        // The finally block runs whether the API calls succeed or fail.
+        // This ensures the loader turns off once the operations finish.
+        setIsLoading(false);
       }
     })();
   }, []);
@@ -46,16 +53,24 @@ export default function App() {
 
       <h1>Football Match Score Tracker</h1>
 
-      <TeamContext value={{ teams, setTeams, matches, setMatches }}>
-        <Routes>
-          <Route path="/" element={
-            <h3>Welcome to "Football Match Score Tracker."</h3>
-          } />
-          <Route path="/teams" element={<TeamsList />} />
-          <Route path="/matches" element={<MatchesList />} />
-          <Route path="/past-matches" element={<PastMatchesList />} />
-        </Routes>
-      </TeamContext>
+      {/* Conditionally render the spinner container if loading is active */}
+      {isLoading ? (
+        <div className="loader-container">
+          <div className="spinner"></div>
+          <p className="loader-text">Loading...</p>
+        </div>
+      ) : (
+        <TeamContext value={{ teams, setTeams, matches, setMatches }}>
+          <Routes>
+            <Route path="/" element={
+              <h3>Welcome to "Football Match Score Tracker."</h3>
+            } />
+            <Route path="/teams" element={<TeamsList />} />
+            <Route path="/matches" element={<MatchesList />} />
+            <Route path="/past-matches" element={<PastMatchesList />} />
+          </Routes>
+        </TeamContext>
+      )}
     </div>
   );
 }

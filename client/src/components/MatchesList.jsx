@@ -58,6 +58,12 @@ export default function MatchesList() {
 
     // Handles locking/finishing the match
     const handleFinishMatch = async (matchId) => {
+        // Ask user confirmation
+        const confirmed = window.confirm("Are you sure?");
+        if (!confirmed) {
+            return;
+        }
+        
         try {
             const finishedMatch = await finishMatch(matchId);
 
