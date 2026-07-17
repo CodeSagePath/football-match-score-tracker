@@ -2,8 +2,8 @@ import { useContext } from "react";
 import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
 import API from "../utils/api";
 
-import StartMatchForm from "./StartMatchForm.jsx";
-import ActiveMatchCard from "./ActiveMatchCard.jsx";
+import StartMatchForm from "./MatchComponent/StartMatchForm.jsx";
+import ActiveMatchCard from "./MatchComponent/ActiveMatchCard.jsx";
 
 export default function MatchesList() {
 

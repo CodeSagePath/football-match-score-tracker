@@ -12,11 +12,18 @@ export default function TeamsList() {
 
         const teamName = teamInputRef.current.value; // Get the value from the input field
 
-        try {
-            await API.post(`/teams`, { name: teamName });
+        // If input is empty, display in alert window
+        if(!teamName) {
+            alert("Please enter a team name.");
+            return;
+        }
 
-            const updatedTeams = await API.get(`/teams`);
-            setTeams(updatedTeams.data);
+        // Add the team to the database
+        try {
+            const addedTeam = await API.post(`/teams`, { name: teamName });
+
+            // Add the team to the state
+            setTeams((teams) => [...teams, addedTeam.data]);
             teamInputRef.current.value = ""; // Clear the input field after successful addition
 
         } catch (error) {
@@ -25,11 +32,21 @@ export default function TeamsList() {
     };
 
     const handleDeleteTeam = async (teamId) => {
+        // Ask for user confirmation
+        const userResponse = confirm("Are you sure you want to delete this team?");
+
+        // If user cancels, do not delete the team
+        if(!userResponse) {
+            return;
+        }
+
+        // Delete the team from the database
         try {
             await API.delete(`/teams/${teamId}`);
 
-            const updatedTeams = await API.get(`/teams`);
-            setTeams(updatedTeams.data);
+            // Remove the team from the state
+            const updatedTeam = teams.filter(team => team._id !== teamId);
+            setTeams(updatedTeam);
 
         } catch (error) {
             console.log("Error deleting team: ", error.message);

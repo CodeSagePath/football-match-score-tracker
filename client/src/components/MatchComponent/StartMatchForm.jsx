@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import TeamAndMatchContext from "../context/TeamAndMatchContext.jsx";
-import API from "../utils/api.js";
+import TeamAndMatchContext from "../../context/TeamAndMatchContext.jsx";
+import API from "../../utils/api.js";
 
 export default function StartMatchForm() {
 

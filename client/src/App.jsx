@@ -14,32 +14,20 @@ export default function App() {
 
   // Fetch on component mount
   useEffect(() => {
-    // IIFE
     (async () => {
       try {
-        const response = await API.get(`/teams`);
-        setTeams(response.data);
+        const [teamsResponse, matchesResponse] = await Promise.all([
+          API.get("/teams"),
+          API.get("/matches")
+        ]);
+
+        setTeams(teamsResponse.data);
+        setMatches(matchesResponse.data);
       } catch (error) {
-        console.log(error.message);
+        console.log("Error fetching data: ", error.message);
       }
     })();
   }, []);
-
-
-  useEffect(() => {
-    // IIFE
-    (
-      async () => {
-        try {
-          const response = await API.get("/matches");
-          setMatches(response.data);
-        } catch (error) {
-          console.log("Error fetching matches: ", error.message);
-        }
-      }
-    )();
-  }, []);
-
 
 
   return (
