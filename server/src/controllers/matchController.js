@@ -3,6 +3,8 @@
 import Match from "../models/Match.js";
 import Team from "../models/Team.js";
 
+import { io } from "../server.js";
+
 const populateOptions = {
   path: "team1_id team2_id",
   options: { withDeleted: true }
@@ -72,7 +74,12 @@ export async function createMatch(req, res, next) {
     await newMatch.save();
 
     const populated = await newMatch.populate(populateOptions);
-    return res.status(201).json(formatMatch(populated));
+    const formattedMatch = formatMatch(populated);
+
+    // Notify clients of a newly created match
+    io.emit("matchCreated", formattedMatch);
+
+    return res.status(201).json(formattedMatch);
   } catch (error) {
     next(error);
   }
@@ -116,6 +123,10 @@ export async function addGoal(req, res, next) {
 
     await match.save();
     const populated = await match.populate(populateOptions);
+
+    // Adding socket event to notify clients of score change
+    io.emit("goalScored", (formatMatch(populated)));
+
     return res.status(200).json(formatMatch(populated));
   } catch (error) {
     next(error);
@@ -152,7 +163,12 @@ export async function decrementGoal(req, res, next) {
 
     await match.save();
     const populated = await match.populate(populateOptions);
-    return res.status(200).json(formatMatch(populated));
+    const formattedMatch = formatMatch(populated);
+
+    // Notify clients of a decremented score
+    io.emit("goalScored", formattedMatch);
+
+    return res.status(200).json(formattedMatch);
   } catch (error) {
     next(error);
   }
@@ -176,7 +192,12 @@ export async function resetScore(req, res, next) {
     await match.save();
 
     const populated = await match.populate(populateOptions);
-    return res.status(200).json(formatMatch(populated));
+    const formattedMatch = formatMatch(populated);
+
+    // Notify clients that score was reset
+    io.emit("goalScored", formattedMatch);
+
+    return res.status(200).json(formattedMatch);
   } catch (error) {
     next(error);
   }
@@ -195,6 +216,10 @@ export async function finishMatch(req, res, next) {
     await match.save();
 
     const populated = await match.populate(populateOptions);
+
+    // Adding socket event to notify clients of score change
+    io.emit("matchFinished", (formatMatch(populated)));
+
     return res.status(200).json(formatMatch(populated));
   } catch (error) {
     next(error);
@@ -212,6 +237,9 @@ export async function deleteMatch(req, res, next) {
 
     match.deletedAt = Date.now();
     await match.save();
+
+    // Notify clients of a deleted match
+    io.emit("matchDeleted", id);
 
     return res.status(200).json({ message: "Match deleted successfully." });
   } catch (error) {

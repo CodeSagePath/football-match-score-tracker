@@ -9,6 +9,9 @@ import morgan from "morgan";
 import connectDB from "./config/db.js";
 import { port } from "./config/env.js";
 
+// Importing socket.io
+import { Server } from "socket.io";
+
 // Error Handler (server errors)
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -23,6 +26,15 @@ import logger from "./utils/logger.js";
 import { swaggerDocument } from "./swagger.js";
 
 const app = express();
+const httpServer = http.createServer(app);
+
+export const io = new Server(httpServer, {
+  cors: {
+    // origin: "https://football-score-api.codesagepath.dev/", // client (frontend) URL
+    origin: "*", // Wildcard (allow all)
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  }
+});
 
 // Connect to the MongoDB database
 connectDB();
@@ -95,7 +107,16 @@ app.get("/api/docs", (req, res) => {
 // Error-Handling Middleware (after all routes)
 app.use(errorHandler);
 
+// Socket.IO Connection Handling
+io.on("connection", (socket) => {
+  logger.info(`Client connected: ${socket.id}`);
+
+  socket.on("disconnect", () => {
+    logger.info(`Client disconnected: ${socket.id}`);
+  });
+});
+
 // Start the Express server
-app.listen(port, () => {
+httpServer.listen(port, () => {
   logger.info(`Server is running on http://127.0.0.1:${port}`);
 });
