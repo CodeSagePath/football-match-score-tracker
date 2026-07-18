@@ -16,8 +16,10 @@ export default function StartMatchForm() {
         const existingMatch = matches.find(
             (match) =>
                 !match.matchFinishFlag &&
-                ((match.team1.id === team1_id && match.team2.id === team2_id) ||
-                    (match.team1.id === team2_id && match.team2.id === team1_id))
+                (match.team1?.id === team1_id ||
+                    match.team1?.id === team2_id ||
+                    match.team2?.id === team1_id ||
+                    match.team2?.id === team2_id)
         );
 
         if (existingMatch) {
@@ -38,20 +40,26 @@ export default function StartMatchForm() {
         const existingMatch = checkExistingMatch();
 
         if (existingMatch) {
-            alert("There is already an existing match between these two teams.");
+            alert("One or both selected teams are already in an active match.");
             return;
         }
 
         try {
             const addedMatchData = await createMatch(team1_id, team2_id);
 
-            // Update local state directly with the newly created match
-            setMatches((prevMatches) => [...prevMatches, addedMatchData]);
+            // Update local state directly with the newly created match if not already added by socket
+            setMatches((prevMatches) => {
+                if (prevMatches.some((match) => match.id === addedMatchData.id)) {
+                    return prevMatches;
+                }
+                return [...prevMatches, addedMatchData];
+            });
 
             // Refreshing the select fields to default value
             setTeam1_id("");
             setTeam2_id("");
         } catch (error) {
+            alert(error.response?.data?.error || error.message);
             console.log(error.response?.data || error.message);
         }
     };

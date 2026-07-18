@@ -77,7 +77,12 @@ export default function App() {
     
     // Listening for new matches
     socket.on("matchCreated", (matchData) => {
-      setMatches((prevMatches) => [...prevMatches, matchData]);
+      setMatches((prevMatches) => {
+        if (prevMatches.some((match) => match.id === matchData.id)) {
+          return prevMatches;
+        }
+        return [...prevMatches, matchData];
+      });
       addNotification(`Match Started: ${matchData.team1.name} vs ${matchData.team2.name}`);
     });
 
