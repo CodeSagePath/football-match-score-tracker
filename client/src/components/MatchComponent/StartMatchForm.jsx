@@ -76,8 +76,10 @@ export default function StartMatchForm() {
                 >
                     <option value="">Select</option>
                     {teams.map((team) => {
-                        if (team._id === team1_id) return null;
-
+                        if (team._id === team1_id) {
+                            return null;
+                        }
+                        
                         return (
                             <option key={team._id} value={team._id}>
                                 {team.name}

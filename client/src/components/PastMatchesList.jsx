@@ -9,11 +9,13 @@ export default function PastMatchesList() {
     // Function to delete the match
     const handleDeleteMatch = async (matchId) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this match?");
-        if (!confirmDelete) return;
+        if (!confirmDelete) {
+            return;
+        }
 
         try {
             await deleteMatch(matchId);
-            
+
             // Remove the match from the local state
             const updatedMatches = matches.filter(match => match.id !== matchId);
             setMatches(updatedMatches);

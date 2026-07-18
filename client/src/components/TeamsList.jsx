@@ -13,8 +13,14 @@ export default function TeamsList() {
         const teamName = teamInputRef.current.value; // Get the value from the input field
 
         // If input is empty, display in alert window
-        if(!teamName) {
+        if (!teamName) {
             alert("Please enter a team name.");
+            return;
+        }
+
+        // Check if team already exists in the state (case insensitive)
+        if (teams.find((team) => team.name.toLowerCase() === teamName.toLowerCase())) {
+            alert("Team already exists.");
             return;
         }
 
@@ -36,7 +42,7 @@ export default function TeamsList() {
         const userResponse = confirm("Are you sure you want to delete this team?");
 
         // If user cancels, do not delete the team
-        if(!userResponse) {
+        if (!userResponse) {
             return;
         }
 
