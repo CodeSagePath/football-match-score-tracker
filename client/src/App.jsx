@@ -9,10 +9,20 @@ import TeamsList from "./components/TeamsList.jsx";
 import MatchesList from "./components/MatchesList.jsx";
 import PastMatchesList from "./components/PastMatchesList.jsx";
 
+// Establishing socket connection
+import { io } from "socket.io-client";
+
+const socketUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.startsWith("http") ?
+  import.meta.env.VITE_API_URL.replace("/api", "") :
+  window.location.origin;
+
+const socket = io(socketUrl);
+
+
 export default function App() {
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
-  
+
   // Loading state to manage the visibility of the initial fetch spinner
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,6 +47,51 @@ export default function App() {
     })();
   }, []);
 
+
+  // checking if `ADMIN_KEY` is present in URL on load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get("ADMIN_KEY");
+    if (key) {
+      console.log("ADMIN_KEY is present in URL");
+      localStorage.setItem("ADMIN_KEY", key);
+    } else {
+      console.log("ADMIN_KEY is NOT present in URL");
+    }
+  }, []);
+
+  
+  // Setting up socket event listeners
+  useEffect(() => {
+    
+    // Listening for new matches
+    socket.on("matchCreated", (matchData) => {
+      setMatches((prevMatches) => [...prevMatches, matchData]);
+    });
+
+    // Listening for score changes (increments, decrements, resets)
+    socket.on("goalScored", (updatedMatchData) => {
+      setMatches((prevMatches) => prevMatches.map((match) => match.id === updatedMatchData.id ? updatedMatchData : match));
+    });
+
+    // Listening for match finished status
+    socket.on("matchFinished", (updatedMatchData) => {
+      setMatches((prevMatches) => prevMatches.map((match) => match.id === updatedMatchData.id ? updatedMatchData : match));
+    });
+
+    // Listening for match deletions
+    socket.on("matchDeleted", (matchId) => {
+      setMatches((prevMatches) => prevMatches.filter((match) => match.id !== matchId));
+    });
+
+    return () => {
+      // Clean up the socket event listeners
+      socket.off("matchCreated");
+      socket.off("goalScored");
+      socket.off("matchFinished");
+      socket.off("matchDeleted");
+    };
+  }, []);
 
   return (
     <div className="app">

@@ -6,6 +6,8 @@ export default function PastMatchesList() {
 
     const { matches, setMatches } = useContext(TeamAndMatchContext);
 
+    const checkAdminAccess = localStorage.getItem("ADMIN_KEY") ? true : false;
+
     // Function to delete the match
     const handleDeleteMatch = async (matchId) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this match?");
@@ -54,7 +56,7 @@ export default function PastMatchesList() {
                             <h4>
                                 {handleGetWinner(match)}
                             </h4>
-                            <button onClick={() => handleDeleteMatch(match.id)}>Delete Match</button>
+                            {checkAdminAccess && <button onClick={() => handleDeleteMatch(match.id)}>Delete Match</button>}
                         </li>
                     })}
             </ul>

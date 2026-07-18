@@ -7,6 +7,8 @@ export default function TeamsList() {
     const teamInputRef = useRef(null);
     const { teams, setTeams } = useContext(TeamAndMatchContext);
 
+    const checkAdminAccess = localStorage.getItem("ADMIN_KEY") ? true : false;
+
     const handleAddTeam = async (event) => {
         event.preventDefault();
 
@@ -66,7 +68,7 @@ export default function TeamsList() {
                 {teams.map((team) => {
                     return <li key={team._id}>{team.name}
 
-                        <button onClick={() => handleDeleteTeam(team._id)}>Delete</button>
+                        {checkAdminAccess && <button onClick={() => handleDeleteTeam(team._id)}>Delete</button>}
                     </li>
                 })}
             </ul>
@@ -76,7 +78,7 @@ export default function TeamsList() {
 
             <form onSubmit={handleAddTeam}>
                 <input type="text" ref={teamInputRef} placeholder="Add Team Name" />
-                <button type="submit">Add Team</button>
+                {checkAdminAccess && <button type="submit">Add Team</button>}
             </form>
         </>
     )

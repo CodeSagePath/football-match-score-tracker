@@ -9,6 +9,8 @@ export default function StartMatchForm() {
     const [team1_id, setTeam1_id] = useState("");
     const [team2_id, setTeam2_id] = useState("");
 
+    const checkAdminAccess = localStorage.getItem("ADMIN_KEY") ? true : false;
+
     // Helper function to check if there is an existing match
     const checkExistingMatch = () => {
         const existingMatch = matches.find(
@@ -57,7 +59,7 @@ export default function StartMatchForm() {
     return (
         <>
             {/* Match Start Form */}
-            <form onSubmit={handleStartMatch}>
+            {checkAdminAccess && <form onSubmit={handleStartMatch}>
                 <select
                     value={team1_id}
                     onChange={(e) => setTeam1_id(e.target.value)}
@@ -79,7 +81,7 @@ export default function StartMatchForm() {
                         if (team._id === team1_id) {
                             return null;
                         }
-                        
+
                         return (
                             <option key={team._id} value={team._id}>
                                 {team.name}
@@ -89,6 +91,7 @@ export default function StartMatchForm() {
                 </select>
                 <button type="submit">Create Match</button>
             </form>
+            }
         </>
     );
 }

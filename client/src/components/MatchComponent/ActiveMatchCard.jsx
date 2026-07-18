@@ -6,6 +6,9 @@ export default function ActiveMatchCard({
     handleDeleteMatch,
     match,
 }) {
+
+    const checkAdminAccess = localStorage.getItem("ADMIN_KEY") ? true : false;
+
     return (
         <>
 
@@ -18,18 +21,18 @@ export default function ActiveMatchCard({
                 {!match.matchFinishFlag ? (
                     <div>
                         <span>{match.team1.name} goals: </span>
-                        <button onClick={() => handleUpdateGoal(match.id, "1", true)}>+</button>
-                        <button onClick={() => handleUpdateGoal(match.id, "1", false)}>-</button>
+                        {checkAdminAccess && <button onClick={() => handleUpdateGoal(match.id, "1", true)}>+</button>}
+                        {checkAdminAccess && <button onClick={() => handleUpdateGoal(match.id, "1", false)}>-</button>}
 
                         <br />
 
                         <span>{match.team2.name} goals: </span>
-                        <button onClick={() => handleUpdateGoal(match.id, "2", true)}>+</button>
-                        <button onClick={() => handleUpdateGoal(match.id, "2", false)}>-</button>
+                        {checkAdminAccess && <button onClick={() => handleUpdateGoal(match.id, "2", true)}>+</button>}
+                        {checkAdminAccess && <button onClick={() => handleUpdateGoal(match.id, "2", false)}>-</button>}
 
                         <br /><br />
 
-                        <button onClick={() => handleFinishMatch(match.id)}>Finish Match</button>
+                        {checkAdminAccess && <button onClick={() => handleFinishMatch(match.id)}>Finish Match</button>}
                     </div>
                 ) : (
                     <p>
@@ -43,9 +46,9 @@ export default function ActiveMatchCard({
                 )}
 
                 {/* Delete button (available for all matches) */}
-                <button onClick={() => handleDeleteMatch(match.id)} style={{ color: "red" }}>
+                {checkAdminAccess && <button onClick={() => handleDeleteMatch(match.id)} style={{ color: "red" }}>
                     Delete Match Record
-                </button>
+                </button>}
             </li>
         </>
     );
