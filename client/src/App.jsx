@@ -8,6 +8,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import TeamsList from "./components/TeamsList.jsx";
 import MatchesList from "./components/MatchesList.jsx";
 import PastMatchesList from "./components/PastMatchesList.jsx";
+import ToastList from "./components/ToastList.jsx";
 
 // Establishing socket connection
 import { io } from "socket.io-client";
@@ -23,8 +24,18 @@ export default function App() {
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
 
+  const [notifications, setNotifications] = useState([]);
+
   // Loading state to manage the visibility of the initial fetch spinner
   const [isLoading, setIsLoading] = useState(true);
+
+  const addNotification = (message) => {
+    const id = Date.now() + Math.random();
+    setNotifications((prev) => [...prev, { id, message }]);
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 4000);
+  };
 
   // Fetch on component mount
   useEffect(() => {
@@ -67,21 +78,30 @@ export default function App() {
     // Listening for new matches
     socket.on("matchCreated", (matchData) => {
       setMatches((prevMatches) => [...prevMatches, matchData]);
+      addNotification(`Match Started: ${matchData.team1.name} vs ${matchData.team2.name}`);
     });
 
     // Listening for score changes (increments, decrements, resets)
     socket.on("goalScored", (updatedMatchData) => {
       setMatches((prevMatches) => prevMatches.map((match) => match.id === updatedMatchData.id ? updatedMatchData : match));
+      addNotification(`Goal! ${updatedMatchData.team1.name} ${updatedMatchData.team1_score} - ${updatedMatchData.team2_score} ${updatedMatchData.team2.name}`);
     });
 
     // Listening for match finished status
     socket.on("matchFinished", (updatedMatchData) => {
       setMatches((prevMatches) => prevMatches.map((match) => match.id === updatedMatchData.id ? updatedMatchData : match));
+      addNotification(`Match Finished: ${updatedMatchData.team1.name} ${updatedMatchData.team1_score} - ${updatedMatchData.team2_score} ${updatedMatchData.team2.name}`);
     });
 
     // Listening for match deletions
     socket.on("matchDeleted", (matchId) => {
-      setMatches((prevMatches) => prevMatches.filter((match) => match.id !== matchId));
+      setMatches((prevMatches) => {
+        const deletedMatch = prevMatches.find((m) => m.id === matchId);
+        if (deletedMatch) {
+          addNotification(`Match Deleted: ${deletedMatch.team1.name} vs ${deletedMatch.team2.name}`);
+        }
+        return prevMatches.filter((match) => match.id !== matchId);
+      });
     });
 
     return () => {
@@ -95,6 +115,8 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Toast Notifications Container */}
+      <ToastList notifications={notifications} />
 
       <div>
         <Link to="/">Home</Link>

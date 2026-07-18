@@ -31,8 +31,8 @@ const httpServer = http.createServer(app);
 
 export const io = new Server(httpServer, {
   cors: {
-    // origin: "https://football-score-api.codesagepath.dev/", // client (frontend) URL
-    origin: "*", // Wildcard (allow all)
+    origin: "https://football-score-api.codesagepath.dev/", // client (frontend) URL
+    // origin: "*", // Wildcard (allow all)
     methods: ["GET", "POST", "PUT", "DELETE"]
   }
 });
