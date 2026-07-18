@@ -4,6 +4,7 @@ import Match from "../models/Match.js";
 import Team from "../models/Team.js";
 
 import { io } from "../server.js";
+import logger from "../utils/logger.js";
 
 const populateOptions = {
   path: "team1_id team2_id",
@@ -77,6 +78,7 @@ export async function createMatch(req, res, next) {
     const formattedMatch = formatMatch(populated);
 
     // Notify clients of a newly created match
+    logger.info(`Socket emit: matchCreated - ID: ${formattedMatch.id}`);
     io.emit("matchCreated", formattedMatch);
 
     return res.status(201).json(formattedMatch);
@@ -123,11 +125,13 @@ export async function addGoal(req, res, next) {
 
     await match.save();
     const populated = await match.populate(populateOptions);
+    const formatted = formatMatch(populated);
 
     // Adding socket event to notify clients of score change
-    io.emit("goalScored", (formatMatch(populated)));
+    logger.info(`Socket emit: goalScored (increment) - ID: ${formatted.id}`);
+    io.emit("goalScored", formatted);
 
-    return res.status(200).json(formatMatch(populated));
+    return res.status(200).json(formatted);
   } catch (error) {
     next(error);
   }
@@ -166,6 +170,7 @@ export async function decrementGoal(req, res, next) {
     const formattedMatch = formatMatch(populated);
 
     // Notify clients of a decremented score
+    logger.info(`Socket emit: goalScored (decrement) - ID: ${formattedMatch.id}`);
     io.emit("goalScored", formattedMatch);
 
     return res.status(200).json(formattedMatch);
@@ -195,6 +200,7 @@ export async function resetScore(req, res, next) {
     const formattedMatch = formatMatch(populated);
 
     // Notify clients that score was reset
+    logger.info(`Socket emit: goalScored (reset) - ID: ${formattedMatch.id}`);
     io.emit("goalScored", formattedMatch);
 
     return res.status(200).json(formattedMatch);
@@ -216,11 +222,13 @@ export async function finishMatch(req, res, next) {
     await match.save();
 
     const populated = await match.populate(populateOptions);
+    const formatted = formatMatch(populated);
 
     // Adding socket event to notify clients of score change
-    io.emit("matchFinished", (formatMatch(populated)));
+    logger.info(`Socket emit: matchFinished - ID: ${formatted.id}`);
+    io.emit("matchFinished", formatted);
 
-    return res.status(200).json(formatMatch(populated));
+    return res.status(200).json(formatted);
   } catch (error) {
     next(error);
   }
@@ -239,6 +247,7 @@ export async function deleteMatch(req, res, next) {
     await match.save();
 
     // Notify clients of a deleted match
+    logger.info(`Socket emit: matchDeleted - ID: ${id}`);
     io.emit("matchDeleted", id);
 
     return res.status(200).json({ message: "Match deleted successfully." });
