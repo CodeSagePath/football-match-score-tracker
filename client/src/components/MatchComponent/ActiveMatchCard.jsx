@@ -45,6 +45,15 @@ export default function ActiveMatchCard({
                     </p>
                 )}
 
+                {/* Share Match Button */}
+                <button onClick={() => {
+                    const shareUrl = `${window.location.origin}/matches`;
+                    navigator.clipboard.writeText(shareUrl)
+                        .then(() => alert("Shareable link copied to clipboard!"));
+                }} style={{ marginRight: "10px" }}>
+                    Share Match
+                </button>
+
                 {/* Delete button (available for all matches) */}
                 {checkAdminAccess && <button onClick={() => handleDeleteMatch(match.id)} style={{ color: "red" }}>
                     Delete Match Record

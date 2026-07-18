@@ -76,10 +76,12 @@ export default function TeamsList() {
             <br />
             <br />
 
-            <form onSubmit={handleAddTeam}>
-                <input type="text" ref={teamInputRef} placeholder="Add Team Name" />
-                {checkAdminAccess && <button type="submit">Add Team</button>}
-            </form>
+            {checkAdminAccess && (
+                <form onSubmit={handleAddTeam}>
+                    <input type="text" ref={teamInputRef} placeholder="Add Team Name" />
+                    <button type="submit">Add Team</button>
+                </form>
+            )}
         </>
     )
 }
